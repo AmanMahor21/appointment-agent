@@ -11,13 +11,13 @@ logger = logging.getLogger(__name__)
 
 class APIClient:
 
-    def __init__(self, timeout: float = 10.0):
-        self.timeout = timeout
+    def __init__(self):
+        pass
 
-    async def http(self, url: str, method: str = "GET", json: Optional[any] = None) -> dict[Any]:
+    async def http(self, url: str, method: str = "GET", timeout: float = 10.0, json: Optional[any] = None) -> dict[Any]:
 
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
+            async with httpx.AsyncClient(timeout=timeout) as client:
 
                 req_method = getattr(client, method.lower())
 
