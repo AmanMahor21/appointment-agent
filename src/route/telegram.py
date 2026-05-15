@@ -6,15 +6,17 @@ from typing import Optional
 from langchain_core.messages import HumanMessage
 
 from src.agent import appointment_graph
+from src.utils.helper import rate_limiter
 from src.route.route import send_message, send_chat_action
 from rich import print
+from upstash_redis import Redis
+
 router = APIRouter()
 
 
 @router.post("/webhook/telegram")
 async def telegram_webhook(request: Request):
     data = await request.json()
-    # print(data, 'req data from telegram')
 
     message = data.get("message") or {}
     text = message.get("text")
@@ -28,6 +30,14 @@ async def telegram_webhook(request: Request):
     user_id = str(chat_id)
     user_name = from_user.get("first_name", "")
     last_name = from_user.get("last_name", "")
+
+    if not await rate_limiter(user_id):
+        await send_message(
+            chat_id,
+            "⏳ You're sending messages too fast!\nPlease wait a moment before sending again."
+        )
+        return {"status": "rate_limited"}
+
     if last_name:
         user_name = f"{user_name} {last_name}".strip()
     user_name = user_name or "User"
@@ -70,7 +80,6 @@ async def telegram_webhook(request: Request):
             },
             config=thread_config,
         )
-        # print('graph result', result, 'graph result')
 
         response_text = result["messages"][-1].content
         await send_message(

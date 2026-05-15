@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     telegram_webhook_url: str       # e.g. https://yourdomain.com/webhook
     database_url: str = "appointments.db"
     model_name: str = "llama-3.1-8b-instant"
+    upstash_redis_rest_url: str
+    upstash_redis_rest_token: str
+    rate_limit: int = 10
+    rate_limit_window: int = 60
 
     @property
     def telegram_api_base(self) -> str:
