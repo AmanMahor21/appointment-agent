@@ -62,10 +62,10 @@ async def update_appointment(
         )
 
     return (
-        f"✅ Appointment #{appointment.id} updated!\n"
-        f"🔧 Service: {appointment.service}\n"
-        f"📅 Date: {appointment.date}\n"
-        f"🕐 Time: {appointment.time}\n"
-        f"📝 Notes: {appointment.notes or 'None'}\n"
+        f"Appointment #{appointment.id} updated!\n"
+        f"Service: {appointment.service}\n"
+        f"Date: {appointment.date}\n"
+        f"Time: {appointment.time}\n"
+        f"Notes: {appointment.notes or 'None'}\n"
         f"Status: {appointment.status.upper()}"
     )

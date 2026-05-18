@@ -1,5 +1,5 @@
-from .telegram import router as telegram_webhook
+from .telegram import router as telegram_router
 
 
 def register_routes(app):
-    app.include_router(telegram_webhook)
+    app.include_router(telegram_router)

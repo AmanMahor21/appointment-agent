@@ -79,6 +79,17 @@ class AppointmentDB:
                 return None
             return Appointment(**dict(row))
 
+    async def get_active_appointment(self, user_id: int) -> int:
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                # "SELECT * FROM appointments WHERE id = ?", (appointment_id,)
+                "SELECT COUNT(*) FROM appointments WHERE user_id = ? AND status = 'confirmed'", (
+                    user_id,)
+            )
+            row = await cursor.fetchone()
+            return row[0] if row else 0
+
     async def get_user_appointments(
         self, user_id: str, status: Optional[str] = None
     ) -> list[Appointment]:

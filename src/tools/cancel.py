@@ -27,9 +27,9 @@ async def cancel_appointment(appointment_id: int, user_id: str) -> str:
         )
 
     return (
-        f"❌ Appointment #{appointment.id} has been cancelled.\n"
-        f"🔧 Service: {appointment.service}\n"
-        f"📅 Date: {appointment.date}\n"
-        f"🕐 Time: {appointment.time}\n"
+        f"Appointment #{appointment.id} has been cancelled.\n"
+        f"Service: {appointment.service}\n"
+        f"Date: {appointment.date}\n"
+        f"Time: {appointment.time}\n"
         f"Status: CANCELLED"
     )

@@ -4,6 +4,7 @@ from langchain_core.tools import tool
 from src.db.database import db
 from datetime import datetime, time as dt_time, date
 from typing import Union
+from src.config import settings
 
 
 @tool
@@ -43,14 +44,14 @@ async def book_appointment(
     # Check business hours
     if appointment_time < dt_time(9, 0) or appointment_time > dt_time(18, 0):
         return (
-            f"❌ Selected time {time} is outside business hours.\n"
+            f"Selected time {time} is outside business hours.\n"
             "Business hours are 09:00 to 18:00 (Monday-Saturday).\n"
             "Please choose a time between 09:00 and 18:00."
         )
 
     # Check day of week (if you want to block Sundays)
     if appointment_date.weekday() == 6:
-        return "❌ We are closed on Sundays. Please choose another day."
+        return "We are closed on Sundays. Please choose another day."
 
     #  No past dates
     if appointment_date < today:
@@ -68,6 +69,15 @@ async def book_appointment(
             "Please choose a different date or time."
         )
 
+    active_booking_count = await db.get_active_appointment(user_id)
+
+    if active_booking_count >= settings.max_bookings_per_user:
+        return (
+            f"You already have {active_booking_count} active appointments.\n"
+            f"You can have a maximum of {settings.max_bookings_per_user} confirmed bookings at a time.\n"
+            "Please cancel an existing appointment first if you want to book a new one."
+        )
+    print("Active appointment for user:", active_booking_count)
     appointment = await db.create_appointment(
         user_id=user_id,
         user_name=user_name,
@@ -78,12 +88,12 @@ async def book_appointment(
     )
 
     return (
-        f"✅ Appointment booked successfully!\n"
-        f"📋 ID: #{appointment.id}\n"
-        f"👤 Name: {appointment.user_name}\n"
-        f"🔧 Service: {appointment.service}\n"
-        f"📅 Date: {appointment.date}\n"
-        f"🕐 Time: {appointment.time}\n"
-        f"📝 Notes: {appointment.notes or 'None'}\n"
+        f"Appointment booked successfully!\n"
+        f"ID: #{appointment.id}\n"
+        f"Name: {appointment.user_name}\n"
+        f"Service: {appointment.service}\n"
+        f"Date: {appointment.date}\n"
+        f"Time: {appointment.time}\n"
+        f"Notes: {appointment.notes or 'None'}\n"
         f"Status: {appointment.status.upper()}"
     )

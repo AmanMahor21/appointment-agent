@@ -45,12 +45,12 @@ async def telegram_webhook(request: Request):
     if text.startswith("/start"):
         await send_message(
             chat_id,
-            f"👋 Hello *{user_name}*! I'm your appointment booking assistant.\n\n"
+            f"Hello *{user_name}*! I'm your appointment booking assistant.\n\n"
             "I can help you:\n"
-            "📌 Book a new appointment\n"
-            "✏️ Update an existing appointment\n"
-            "❌ Cancel an appointment\n"
-            "📋 View your appointments\n\n"
+            "Book a new appointment\n"
+            "Update an existing appointment\n"
+            "Cancel an appointment\n"
+            "View your appointments\n\n"
             "Just tell me what you'd like to do!",
         )
         return {"status": "ok"}
@@ -84,11 +84,11 @@ async def telegram_webhook(request: Request):
         response_text = result["messages"][-1].content
         await send_message(
             chat_id,
-            response_text or "⚠️ Got an empty response. Please try again.",
+            response_text or "Got an empty response. Please try again.",
         )
 
     except Exception as e:
-        await send_message(chat_id, "⚠️ Something went wrong. Please try again.")
+        await send_message(chat_id, "Something went wrong. Please try again.")
         raise e
 
     return {"status": "ok"}
